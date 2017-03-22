@@ -1,0 +1,42 @@
+{
+  "blueprint": "BPT",
+  "default_password" : "admin",
+  "configurations" : [
+    {
+      "hive-site": {
+        "properties": {
+          "javax.jdo.option.ConnectionPassword": "5rMQvgrPYD6I"
+        }
+      }
+    }
+  ],
+  "host_groups" :[
+    {
+      "name" : "bigdata-hbase1",
+      "hosts" : [
+        {
+          "fqdn" : "bigdata-hbase1.example.com",
+          "provision_action" : "INSTALL_ONLY"
+        }
+      ]
+    },
+    {
+      "name" : "bigdata-hbase2",
+      "hosts" : [
+        {
+          "fqdn" : "bigdata-hbase2.example.com",
+          "provision_action" : "INSTALL_ONLY"
+        }
+      ]
+    },
+    {
+      "name" : "bigdata-hbase3",
+      "hosts" : [
+        {
+          "fqdn" : "bigdata-hbase3.example.com",
+          "provision_action" : "INSTALL_ONLY"
+        }
+      ]
+    }
+  ]
+}

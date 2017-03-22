@@ -1,0 +1,20 @@
+{% set ntp =  salt['grains.filter_by']({
+    'Debian': {
+        'client': 'ntp',
+        'server': 'ntpd',
+        'service': 'ntp',
+        'ntpdate': 'ntpdate',
+        'ntp_conf': '/etc/ntp.conf',
+        'ntpd_conf': '/etc/ntp.conf',
+        'sourcefile': "salt://ntp/files/Debian_ntp.conf"
+    },
+    'RedHat': {
+        'client': 'ntp',
+        'server': 'ntpd',
+        'service': 'ntpd',
+        'ntpdate': 'ntpdate',
+        'ntp_conf': '/etc/ntp.conf',
+        'ntpd_conf': '/etc/ntpd.conf',
+        'sourcefile': "salt://ntp/files/Redhat_ntp.conf"
+    },
+}, grain='os_family', merge=salt['pillar.get']('ntp', {}), default='Debian') %}

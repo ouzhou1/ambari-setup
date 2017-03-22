@@ -1,0 +1,28 @@
+{% set mysqlversion = pillar.get('mysql:mysqlversion', '5.6') %}
+
+{% set mysql = salt['grains.filter_by']({
+    'Debian': {
+        'serverpkgs': ['mysql-server-'+mysqlversion],
+        'commonpkgs': ['python-mysqldb', 'libmysql-java', 'mysql-client-core-5.6'],
+        'service': 'mysql',
+        'config': '/etc/mysql/my.cnf',
+        'replication': {
+           'role': 'none',
+        },
+        'ssl': {
+          'enabled': False
+        }
+    },
+    'RedHat': {
+        'serverpkgs': ['mysql-server'],
+        'commonpkgs': ['MySQL-python', 'libmysql-java'],
+        'service': 'mysqld',
+        'config': '/etc/my.cnf',
+        'replication': {
+           'role': 'none',
+        },
+        'ssl': {
+          'enabled': False
+        }
+    },
+}, grain='os_family', merge=salt['pillar.get']('mysql')) %}

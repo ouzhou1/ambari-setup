@@ -1,0 +1,1 @@
+{{ ambari_user }} ALL=(ALL) NOPASSWD:ALL

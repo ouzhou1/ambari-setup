@@ -1,0 +1,4 @@
+{
+  "blueprint": "BPT",
+  "host_group": "ambari-nodes"
+}

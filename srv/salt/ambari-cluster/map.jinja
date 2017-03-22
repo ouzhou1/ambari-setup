@@ -1,0 +1,7 @@
+{% set ambari_cluster = pillar['ambari-cluster'] %}
+{% set javatarball = ambari_cluster['javatarball'] %}
+{% set jcepolicy = ambari_cluster['jcepolicy'] %}
+{% set javaresourcesdir = ambari_cluster['javaresourcesdir'] %}
+{% set ambari_resources_dir = ambari_cluster['ambari_resources_dir'] %}
+{% set ambaridb = pillar['mysql-users']['ambari'] %}
+{% set hivedb = pillar['mysql-users']['hive'] %}

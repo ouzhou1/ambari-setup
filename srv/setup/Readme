@@ -1,0 +1,9 @@
+部署步骤：
+* salt-master&&ambari-server:
+1. 将srv打包成srv.tar.gz，并放置在ambari-server的/目录下，将服务器原有/srv备份并删除;
+2. 将srv解压，解压后修改.ambari-cluster.yaml的信息，一般情况下只需要修改ambari-server-ha，ambari-servers，ambari-agents即可
+3. 在/srv/setup/下运行bash saltmaster_setup.sh，输入salt master ip和salt minion id
+4. 在各个salt minion上初始化，运行 bash saltminion_setup.sh，输入salt master ip和salt minion id
+5. salt master接受key salt-key -L（check), salt-key -A -y
+6. 各个minion上，运行 salt-call state.highstate -l debug
+7. 在/srv/setup/下运行python AmbariRequest.py -f ambari_initial，完成安装
