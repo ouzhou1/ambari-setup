@@ -5,6 +5,7 @@
 cp {{ javaresourcesdir }}{{ mysqlconnector }} {{ mysqlconnectordir }}:
   cmd.run:
     - unless: test 1 -eq `ls {{ mysqlconnectordir }}{{ mysqlconnector }}|wc -l`
+    - onlyif: test 1 -eq `ls -d {{ mysqlconnectordir }}|wc -l`
 
 {% endfor %}
 
