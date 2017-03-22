@@ -9,7 +9,7 @@ mysql-users:
     charset: utf8
   ambari:
     host: ambari-server1.example.com
-    granthost: 'ambari%'
+    granthost: '%'
     grantall: y
     port: 3306
     dbname: ambari
@@ -22,7 +22,7 @@ mysql-users:
     charset: utf8
   hive:
     host: ambari-server1.example.com
-    granthost: 'ambari%'
+    granthost: '%'
     grantall: y
     port: 3306
     dbname: hive
