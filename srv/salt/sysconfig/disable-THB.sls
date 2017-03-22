@@ -19,7 +19,7 @@ disable_transparent_hugepage_rc_local:
   file.replace:
     - unless: test 2 -eq `grep -c transparent_hugepage /etc/rc.local`
     - name: /etc/rc.local
-    - pattern: "exit 0"
+    - pattern: "^exit 0"
     - repl: {{ ubuntu_disable_transparent_hugepage_enabled }}\n{{ ubuntu_disable_transparent_hugepage_defrag }}\nexit 0
 
 {% endif %}

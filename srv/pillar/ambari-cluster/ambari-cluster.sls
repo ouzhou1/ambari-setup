@@ -5,6 +5,9 @@ ambari-cluster:
   jcepolicy: jce_policy-8.zip
   javaresourcesdir: /srv/salt/repo-server/files/sources/
   sshprefix: "ambari*"
+  mysqlconnectordirs:
+    - '/usr/hdp/2.5.3.0-37/hive/lib/'
+    - '/usr/hdp/current/hive-server2-hive2/lib/'
   ambari-api:
     baseurl: http://ambari-server1.example.com:8080/api/v1
     blueprints: BPT

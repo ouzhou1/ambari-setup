@@ -1,4 +1,12 @@
-{% from 'ambari-cluster/map.jinja' import ambari_cluster with context %}
+{% from 'ambari-cluster/map.jinja' import ambari_cluster, javaresourcesdir, mysqlconnector with context %}
+
+{% for mysqlconnectordir in pillar['ambari-cluster']['mysqlconnectordirs'] %}
+
+cp {{ javaresourcesdir }}{{ mysqlconnector }} {{ mysqlconnectordir }}:
+  cmd.run:
+    - unless: test 1 -eq `ls {{ mysqlconnectordir }}{{ mysqlconnector }}|wc -l`
+
+{% endfor %}
 
 ambari-agent-config:
   file.managed:

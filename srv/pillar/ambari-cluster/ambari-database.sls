@@ -33,3 +33,4 @@ mysql-users:
     resetsql: ambari-server-mysql-reset.sql
 mysql:
   mysqlversion: '5.6'
+  mysqlconnector: 'mysql-connector-java.jar'
