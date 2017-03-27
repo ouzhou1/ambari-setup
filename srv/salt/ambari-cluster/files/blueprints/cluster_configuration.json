@@ -2273,17 +2273,24 @@
       "cardinality" : "1+"
     }
   ],
-  "settings" : [{
-    "recovery_settings" : [
-      {
-        "recovery_enabled" : "true",
-        "recovery_type": "AUTO_START",
-        "recovery_lifetime_max_count": "4",
-        "recovery_max_count": "2",
-        "recovery_window_in_minutes": "10",
-        "recovery_retry_interval": "5000"
-      }
-    ]}
+  "settings" : [
+    {
+      "recovery_settings" : [
+        {
+          "recovery_enabled" : "true",
+          "recovery_type": "AUTO_START",
+          "recovery_lifetime_max_count": "4",
+          "recovery_max_count": "2",
+          "recovery_window_in_minutes": "10",
+          "recovery_retry_interval": "5000"
+        }
+      ]
+    },
+    {
+      "component_settings" : [
+        { "name" : "YARN_CLIENT", "recovery_enabled" : "false" }
+      ]
+    }
   ],
   "Blueprints" : {
     "blueprint_name": "BPT",
