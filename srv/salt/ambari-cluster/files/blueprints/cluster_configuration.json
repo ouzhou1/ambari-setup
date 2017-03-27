@@ -645,7 +645,7 @@
           "hive.vectorized.execution.mapjoin.native.enabled" : "true",
           "hive.metastore.event.listeners" : "",
           "hive.server2.tez.default.queues" : "default",
-          "hive.llap.zk.sm.connectionString" : "%HOSTGROUP::bigdata-hbase3%:2181,%HOSTGROUP::bigdata-hbase2%:2181,%HOSTGROUP::bigdata-hbase1%:2181",
+          "hive.llap.zk.sm.connectionString" : "10.12.0.94:2181,10.12.0.95:2181,10.12.0.96:2181",
           "hive.server2.tez.sessions.per.default.queue" : "1",
           "hive.server2.webui.use.ssl" : "false",
           "hive.llap.management.rpc.port" : "15004",
@@ -1049,7 +1049,7 @@
       "yarn-site" : {
         "properties_attributes" : { },
         "properties" : {
-          "yarn.resourcemanager.zk-address" : "%HOSTGROUP::bigdata-hbase2%:2181,%HOSTGROUP::bigdata-hbase3%:2181,%HOSTGROUP::bigdata-hbase1%:2181",
+          "yarn.resourcemanager.zk-address" : "10.12.0.94:2181,10.12.0.95:2181,10.12.0.96:2181",
           "yarn.nodemanager.container-monitor.interval-ms" : "3000",
           "yarn.timeline-service.entity-group-fs-store.active-dir" : "/ats/active/",
           "yarn.nodemanager.linux-container-executor.group" : "hadoop",
@@ -1144,7 +1144,7 @@
           "yarn.timeline-service.leveldb-state-store.path" : "/hadoop/yarn/timeline",
           "yarn.timeline-service.entity-group-fs-store.done-dir" : "/ats/done/",
           "yarn.nodemanager.disk-health-checker.max-disk-utilization-per-disk-percentage" : "90",
-          "hadoop.registry.zk.quorum" : "%HOSTGROUP::bigdata-hbase2%:2181,%HOSTGROUP::bigdata-hbase3%:2181,%HOSTGROUP::bigdata-hbase1%:2181",
+          "hadoop.registry.zk.quorum" : "10.12.0.94:2181,10.12.0.95:2181,10.12.0.96:2181",
           "yarn.nodemanager.log-aggregation.roll-monitoring-interval-seconds" : "3600",
           "yarn.nodemanager.container-executor.class" : "org.apache.hadoop.yarn.server.nodemanager.DefaultContainerExecutor",
           "yarn.resourcemanager.nodes.exclude-path" : "/etc/hadoop/conf/yarn.exclude",
@@ -1614,7 +1614,7 @@
           "hive.metastore.execute.setugi" : "true",
           "hive.tez.smb.number.waves" : "0.5",
           "hive.server2.authentication.spnego.keytab" : "HTTP/_HOST@EXAMPLE.COM",
-          "hive.zookeeper.quorum" : "%HOSTGROUP::bigdata-hbase2%:2181,%HOSTGROUP::bigdata-hbase3%:2181,%HOSTGROUP::bigdata-hbase1%:2181",
+          "hive.zookeeper.quorum" : "10.12.0.94:2181,10.12.0.95:2181,10.12.0.96:2181",
           "hive.mapjoin.bucket.cache.size" : "10000",
           "hive.metastore.kerberos.principal" : "hive/_HOST@EXAMPLE.COM",
           "hive.tez.auto.reducer.parallelism" : "true",
@@ -1682,7 +1682,7 @@
           "hive.metastore.connect.retries" : "24",
           "hive.optimize.reducededuplication.min.reducer" : "4",
           "hive.tez.input.format" : "org.apache.hadoop.hive.ql.io.HiveInputFormat",
-          "hive.cluster.delegation.token.store.zookeeper.connectString" : "%HOSTGROUP::bigdata-hbase2%:2181,%HOSTGROUP::bigdata-hbase3%:2181,%HOSTGROUP::bigdata-hbase1%:2181",
+          "hive.cluster.delegation.token.store.zookeeper.connectString" : "10.12.0.94:2181,10.12.0.95:2181,10.12.0.96:2181",
           "hive.metastore.uris" : "thrift://%HOSTGROUP::bigdata-hbase1%:9083",
           "hive.server2.max.start.attempts" : "5",
           "hive.exec.dynamic.partition.mode" : "strict",
@@ -1802,7 +1802,7 @@
       "webhcat-site" : {
         "properties_attributes" : { },
         "properties" : {
-          "templeton.zookeeper.hosts" : "%HOSTGROUP::bigdata-hbase2%:2181,%HOSTGROUP::bigdata-hbase3%:2181,%HOSTGROUP::bigdata-hbase1%:2181",
+          "templeton.zookeeper.hosts" : "10.12.0.94:2181,10.12.0.95:2181,10.12.0.96:2181",
           "webhcat.proxyuser.root.groups" : "*",
           "webhcat.proxyuser.root.hosts" : "%HOSTGROUP::bigdata-hbase1%",
           "templeton.hadoop.queue.name" : "default",
