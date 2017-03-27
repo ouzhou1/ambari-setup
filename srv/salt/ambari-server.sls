@@ -5,3 +5,4 @@ include:
   - ambari-cluster.pkg
   - ambari-cluster.config-agent
   - ambari-cluster.config-server
+  - common.setup-crontab

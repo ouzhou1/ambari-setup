@@ -104,6 +104,15 @@ class Ambari(object):
         except Exception as E:
             print "Failed to acquire local ambari-cluster blueprints host map file due to: %s" % E
 
+    def amb_bpt_scale_conf(self):
+        """
+        return ambari blueprints cluster extend scale node config file
+        """
+        try:
+            return self.amb_cluster_detail()['ambari-api']['blueprints_scale_conf']
+        except Exception as E:
+            print "Failed to acquire local ambari-cluster blueprints scale extend file due to: %s" % E
+
     def amb_cls_postfix_url(self):
         """
         return ambari postfix url of cluster based on api base url
@@ -159,7 +168,7 @@ class Ambari(object):
         except Exception as E:
             print "Failed to acquire local ambari-cluster new hdp-utils repo info due to: %s" % E
 
-    def put(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, verbose=0):
+    def put(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
         """
         Put request method function
         post_field
@@ -181,7 +190,7 @@ class Ambari(object):
             c.setopt(pycurl.POSTFIELDS, post_fields)
             c.setopt(pycurl.WRITEFUNCTION, string_buffer.write)
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
-            c.setopt(pycurl.VERBOSE, verbose)
+            c.setopt(pycurl.VERBOSE, detail)
 
             print """Put request to: %s\nWith post fields: %s""" % (request_url, post_fields)
 
@@ -198,7 +207,7 @@ class Ambari(object):
             print "Failed to execute put method to URL: %s\nDue to: %s\nWith post fields: %s" % (request_url, E,
                                                                                                  post_fields)
 
-    def upload_file(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, verbose=0):
+    def upload_file(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
         """
         Put request method function
         post_field
@@ -219,7 +228,7 @@ class Ambari(object):
             c.setopt(pycurl.WRITEFUNCTION, string_buffer.write)
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
             c.setopt(pycurl.UPLOAD, 1)
-            c.setopt(pycurl.VERBOSE, verbose)
+            c.setopt(pycurl.VERBOSE, detail)
 
             with open(upload_file, 'rb') as upload_fd:
                 c.setopt(pycurl.READFUNCTION, upload_fd.read)
@@ -240,7 +249,7 @@ class Ambari(object):
         except Exception as E:
             print "Failed to execute put method to URL: %s\nDue to: %s\n" % (request_url, E)
 
-    def delete(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, verbose=0):
+    def delete(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
         string_buffer = StringIO()
         c = pycurl.Curl()
 
@@ -255,7 +264,7 @@ class Ambari(object):
             c.setopt(pycurl.HTTPHEADER, http_header)
             c.setopt(pycurl.CUSTOMREQUEST, "DELETE")
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
-            c.setopt(pycurl.VERBOSE, verbose)
+            c.setopt(pycurl.VERBOSE, detail)
 
             if post_fields:
                 c.setopt(pycurl.POSTFIELDS, post_fields)
@@ -272,7 +281,7 @@ class Ambari(object):
         except Exception as E:
             print "Failed to execute Delete method to URL: %s\nDue to: %s\n" % (request_url, E)
 
-    def get(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, verbose=0):
+    def get(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
         string_buffer = StringIO()
         c = pycurl.Curl()
 
@@ -287,7 +296,7 @@ class Ambari(object):
             c.setopt(pycurl.HTTPHEADER, http_header)
             c.setopt(pycurl.CUSTOMREQUEST, "GET")
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
-            c.setopt(pycurl.VERBOSE, verbose)
+            c.setopt(pycurl.VERBOSE, detail)
 
             if post_fields:
                 c.setopt(pycurl.POSTFIELDS, post_fields)
@@ -305,7 +314,7 @@ class Ambari(object):
         except Exception as E:
             print "Failed to execute Get method to URL: %s\nDue to: %s\n" % (request_url, E)
 
-    def ambari_initial(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, verbose=0):
+    def ambari_initial(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
 
         ambari_cluster_bpt_conf_file = self.amb_bpt_cls_conf()
         ambari_hosts_map_file = self.amb_bpt_host_mp()
@@ -319,16 +328,26 @@ class Ambari(object):
         ambari_cluster_new_hdp_repo_info = self.amb_hdp_new_repo_info()
         ambari_cluster_hdp_util_repo_postfix_info = self.amb_hdp_utils_new_repo_info()
 
-        self.delete(ambari_cluster_postfix_url, post_fields, upload_file, baseurl, verbose)
-        self.delete(ambari_blueprints_postfix_url, post_fields, upload_file, baseurl, verbose)
-        self.put(ambari_cluster_hdp_repo_postfix_url, ambari_cluster_new_hdp_repo_info, upload_file, baseurl, verbose)
+        self.delete(ambari_cluster_postfix_url, post_fields, upload_file, baseurl, detail)
+        self.delete(ambari_blueprints_postfix_url, post_fields, upload_file, baseurl, detail)
+        self.put(ambari_cluster_hdp_repo_postfix_url, ambari_cluster_new_hdp_repo_info, upload_file, baseurl, detail)
         self.put(ambari_cluster_hdp_util_repo_postfix_url, ambari_cluster_hdp_util_repo_postfix_info, upload_file,
-                 baseurl, verbose)
-        self.upload_file(ambari_blueprints_postfix_url, post_fields, ambari_cluster_bpt_conf_file, baseurl, verbose)
-        self.upload_file(ambari_cluster_postfix_url, post_fields, ambari_hosts_map_file, baseurl, verbose)
+                 baseurl, detail)
+        self.upload_file(ambari_blueprints_postfix_url, post_fields, ambari_cluster_bpt_conf_file, baseurl, detail)
+        self.upload_file(ambari_cluster_postfix_url, post_fields, ambari_hosts_map_file, baseurl, detail)
 
-    def ambari_scale(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, verbose=0):
-        pass
+    def ambari_scale(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
+                     scale_hosts=None, *args):
+        """
+        TODO:
+        """
+        ambari_blueprints_scale_conf = self.amb_bpt_scale_conf()
+        if scale_hosts:
+            for scale_host in scale_hosts:
+                post_fields = "%s/%s" % (post_fields, scale_host)
+                self.upload_file(url_postfix, post_fields, ambari_blueprints_scale_conf, baseurl, detail)
+        else:
+            raise Exception("No scale hosts given!!!")
 
 
 def main():
@@ -342,16 +361,17 @@ def main():
     parser.add_argument("-p", action="store", dest="post_fields", help="post fields")
     parser.add_argument("-u", action="store", dest="upload_file", help="upload file name")
     parser.add_argument("-b", action="store", dest="baseurl", help="ambari server api base url")
-    parser.add_argument("-v", action="store_true", dest="verbose_bool", default=True, help="verbosity turned on")
+    parser.add_argument("-v", action="store_true", dest="detail", default=True, help="verbosity turned on")
     parser.add_argument("-f", action="store", dest="request_method", help="request method")
+    parser.add_argument("-s", nargs='+', action="store", dest="scale_hosts", help="scale extend hosts")
 
     print parser.parse_args()
     args = parser.parse_args()
 
-    if args.verbose_bool:
-        verbose = 1
+    if args.detail:
+        detail = 1
     else:
-        verbose = 0
+        detail = 0
 
     request_method_dict = {
         'delete': ambari.delete,
@@ -359,6 +379,7 @@ def main():
         'put': ambari.put,
         'get': ambari.get,
         'ambari_initial': ambari.ambari_initial,
+        'ambari_scale': ambari.ambari_scale,
     }
 
     request_method = args.request_method
@@ -368,7 +389,8 @@ def main():
                                             args.post_fields,
                                             args.upload_file,
                                             args.baseurl,
-                                            args.verbose_bool)
+                                            detail,
+                                            args.scale_hosts)
 
 if __name__ == '__main__':
     main()

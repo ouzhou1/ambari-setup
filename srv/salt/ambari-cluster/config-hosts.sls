@@ -10,9 +10,9 @@
 {{ servername }}-hostname:
   file.managed:
     - name: /etc/hostname
-    - contents:  {{ servername }}
+    - contents:  {{ serverinfo['hostname'] }}
   cmd.run:
-    - name: hostname {{ servername }}
+    - name: hostname {{ serverinfo['hostname'] }}
 
 {% endif %}
 

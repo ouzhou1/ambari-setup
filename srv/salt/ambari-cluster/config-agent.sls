@@ -20,7 +20,8 @@ ambari-agent-config:
     - context:
       ambariserverha: {{ ambari_cluster['ambari-server-ha']['ambari-server']['hostname'] }}
 
-ambari-agent-start:
+
+ambari-agent-restart:
   cmd.run:
-    - name: ambari-agent start
+    - name: ambari-agent stop && ambari-agent start
 

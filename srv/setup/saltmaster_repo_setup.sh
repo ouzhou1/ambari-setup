@@ -63,10 +63,6 @@ cat > /etc/apt/sources.list.d/sys-local.list << EOF
 deb file:/usr/local/repo/ubuntu-14.04-common ./
 EOF
 
-if [ -f /etc/apt/sources.list ]; then
-    sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
-fi
-
 pingtr=`ping -c 1 www.baidu.com 1> /dev/null;echo $?`
 
 if [ "$pingtr" = "0" ]; then
@@ -83,7 +79,10 @@ deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted univers
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
 EOF
-
+else
+    if [ -f /etc/apt/sources.list ]; then
+        sudo mv /etc/apt/sources.list /etc/apt/sources.list.bak
+    fi
 fi
 
 apt-get update

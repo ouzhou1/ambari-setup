@@ -13,27 +13,57 @@
   "host_groups" :[
     {
       "name" : "bigdata-hbase1",
+      "configurations" : [
+        {
+          "kafka-broker" : {
+            "properties_attributes" : { },
+            "properties" : {
+              "listeners" : "PLAINTEXT://10.12.0.94:9092"
+            }
+          }
+        }
+      ],
       "hosts" : [
         {
-          "fqdn" : "bigdata-hbase1.example.com",
+          "fqdn" : "10.12.0.94",
           "provision_action" : "INSTALL_ONLY"
         }
       ]
     },
     {
       "name" : "bigdata-hbase2",
+      "configurations" : [
+        {
+          "kafka-broker" : {
+            "properties_attributes" : { },
+            "properties" : {
+              "listeners" : "PLAINTEXT://10.12.0.95:9092"
+            }
+          }
+        }
+      ],
       "hosts" : [
         {
-          "fqdn" : "bigdata-hbase2.example.com",
+          "fqdn" : "10.12.0.95",
           "provision_action" : "INSTALL_ONLY"
         }
       ]
     },
     {
       "name" : "bigdata-hbase3",
+      "configurations" : [
+        {
+          "kafka-broker" : {
+            "properties_attributes" : { },
+            "properties" : {
+              "listeners" : "PLAINTEXT://10.12.0.96:9092"
+            }
+          }
+        }
+      ],
       "hosts" : [
         {
-          "fqdn" : "bigdata-hbase3.example.com",
+          "fqdn" : "10.12.0.96",
           "provision_action" : "INSTALL_ONLY"
         }
       ]

@@ -62,6 +62,6 @@ ambari-server-setup:
     - require:
       - cmd: java-talball-file-managed
 
-ambari-server-start:
+ambari-server-restart:
   cmd.run:
-    - name: ambari-server start
+    - name: ambari-server stop && ambari-server start

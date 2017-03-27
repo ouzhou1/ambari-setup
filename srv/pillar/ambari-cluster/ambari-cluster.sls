@@ -8,11 +8,13 @@ ambari-cluster:
   mysqlconnectordirs:
     - '/usr/hdp/2.5.3.0-37/hive/lib/'
     - '/usr/hdp/current/hive-server2-hive2/lib/'
+    - '/usr/hdp/current/hive-server2/lib/'
   ambari-api:
     baseurl: http://ambari-server1.example.com:8080/api/v1
     blueprints: BPT
     blueprints_cluster_conf: "../salt/ambari-cluster/files/blueprints/cluster_configuration.json"
     blueprints_host_map: "../salt/ambari-cluster/files/blueprints/hostmapping.json"
+    blueprints_scale_conf: "../salt/ambari-cluster/files/blueprints/scalextension.json"
     url_postfix_cluster: "clusters/bigdata"
     url_postfix_blueprints: 'blueprints/BPT/?validate_topology=false'
     url_postfix_HDP_repo: 'stacks/HDP/versions/2.5/operating_systems/ubuntu14/repositories/HDP-2.5'
@@ -35,14 +37,18 @@ ambari-cluster:
       port: 8080
   ambari-agents:
     bigdata-hbase1:
-      hostname: bigdata-hbase1.example.com
+      hostname: 10.12.0.94
       ip: 10.12.0.94
       ambari_user: ambari
     bigdata-hbase2:
-      hostname: bigdata-hbase2.example.com
+      hostname: 10.12.0.95
       ip: 10.12.0.95
       ambari_user: ambari
     bigdata-hbase3:
-      hostname: bigdata-hbase3.example.com
+      hostname: 10.12.0.96
       ip: 10.12.0.96
       ambari_user: ambari
+
+crontab:
+  ambari-server1:
+    cmd: "for minion in `salt-key -l unaccepted|grep -E \"^bigdata*\"`;do salt-key -a $minion -y; done"
