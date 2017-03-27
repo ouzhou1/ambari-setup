@@ -218,3 +218,21 @@ create_user_group_{{ user }}:
        - {{ user }}
 
 {%- endmacro %}
+
+
+# Macros for combine config for hdp url/port config like: bigdata-hbase1:2181,bigdata-hbase2:2181,bigdata-hbase3:2181
+#
+# combine_config(item_name)
+# item_name = list in python which is iterable, like kafkastore-connection-urls below:
+#  kafkastore-connection-urls:
+#    - "bigdata-hbase1:2181"
+#    - "bigdata-hbase2:2181"
+#    - "bigdata-hbase3:2181"
+
+{%- macro combine_config(item_name) -%}
+{%- if item_name is iterable -%}
+{{ item_name | join(', ') }}
+{%- else -%}
+None
+{%- endif -%}
+{%- endmacro -%}

@@ -1,1 +1,1 @@
-deb http://ambari-server1.example.com:8089/ubuntu-14.04-common/ ./
+deb http://ambari-server1:8089/ubuntu-14.04-common/ ./

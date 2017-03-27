@@ -20,8 +20,6 @@
   host.only:
     - hostnames:
       - {{ serverinfo['hostname'] }}
-      - {{ servername }}
-
 
 {% endfor %}
 

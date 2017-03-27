@@ -7,7 +7,7 @@ STATE=$1
 case $STATE in
     "MASTER")
         # stop peer host ambari-server
-        # su - ambari -c "ssh ambari@ambari-server2.example.com \"sudo ambari-server stop\" "
+        # su - ambari -c "ssh ambari@ambari-server2 \"sudo ambari-server stop\" "
         # start local ambari-server
         ambari-server start
         exit 0

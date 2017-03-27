@@ -12,5 +12,6 @@ base:
     - ambari-cluster.ambari-ntp
     - ambari-cluster.ambari-cluster
     - ambari-cluster.ambari-database
+    - confluent.confluent
 
 

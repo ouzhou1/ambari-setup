@@ -16,22 +16,22 @@ keepalived:
         state: MASTER
         priority: 200
         peer_ip: 10.12.0.97
-        host: ambari-server1.example.com
-        peer_host: ambari-server2.example.com
+        host: ambari-server1
+        peer_host: ambari-server2
         interface: eth1
       ambari-server2:
         state: BACKUP
         priority: 100
         peer_ip: 10.12.0.93
-        host: ambari-server2.example.com
-        peer_host: ambari-server1.example.com
+        host: ambari-server2
+        peer_host: ambari-server1
         interface: eth1
     real_servers:
-      ambari-server1.example.com:
+      ambari-server1:
         ip: 10.12.0.93
         port: 8080
         weight: 1
-      ambari-server2.example.com:
+      ambari-server2:
         ip: 10.12.0.97
         port: 8080
         weight: 1

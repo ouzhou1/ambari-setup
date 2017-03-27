@@ -7,3 +7,4 @@ include:
   - kernel.vm-dirty
   - ambari-cluster.ambari-repo
   - database.mysql.pkg-mysql-client
+  - common.config-java

@@ -25,7 +25,7 @@
       ],
       "hosts" : [
         {
-          "fqdn" : "10.12.0.94",
+          "fqdn" : "bigdata-hbase1",
           "provision_action" : "INSTALL_ONLY"
         }
       ]
@@ -44,7 +44,7 @@
       ],
       "hosts" : [
         {
-          "fqdn" : "10.12.0.95",
+          "fqdn" : "bigdata-hbase2",
           "provision_action" : "INSTALL_ONLY"
         }
       ]
@@ -63,7 +63,7 @@
       ],
       "hosts" : [
         {
-          "fqdn" : "10.12.0.96",
+          "fqdn" : "bigdata-hbase3",
           "provision_action" : "INSTALL_ONLY"
         }
       ]

@@ -27,7 +27,7 @@ ambari ALL=(ALL) NOPASSWD:ALL
 EOF
 
 sudo mkdir -p /home/ambari/.ssh/
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjl11SCrv5/Tvm2XGypBpeo0nbHceALwbR5z0nYhP0PPsktH8OytJGXIBUk/GMIqMDapyi2hasbcjiRoyaMo/jipcPoNszKUQa2t6Lqyx3b+Z81/XBlXFGdV5UZ3ALCa7RDc3m/jl90WrAcdI6MnZY3qajAKDaNUpjBNq05e8W5o2bm+YNVYQGHgZldLfFRZba+G+n3QIhMlkLjN7i+eyIIJf9BrVdaWTfqTU9EHeNE4cj5fFE99vzMzMk+E6QmAyoJzYSNGHamTYOeWoHe9secrzrfgZrTkkEoTKIO7tfFeQdCCC0hSBCdoIJv9wPfIQFq8oKfjDCbnXNNoRHoO0v ambari@ambari-server1.example.com" > /home/ambari/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDjl11SCrv5/Tvm2XGypBpeo0nbHceALwbR5z0nYhP0PPsktH8OytJGXIBUk/GMIqMDapyi2hasbcjiRoyaMo/jipcPoNszKUQa2t6Lqyx3b+Z81/XBlXFGdV5UZ3ALCa7RDc3m/jl90WrAcdI6MnZY3qajAKDaNUpjBNq05e8W5o2bm+YNVYQGHgZldLfFRZba+G+n3QIhMlkLjN7i+eyIIJf9BrVdaWTfqTU9EHeNE4cj5fFE99vzMzMk+E6QmAyoJzYSNGHamTYOeWoHe9secrzrfgZrTkkEoTKIO7tfFeQdCCC0hSBCdoIJv9wPfIQFq8oKfjDCbnXNNoRHoO0v ambari@ambari-server1" > /home/ambari/.ssh/authorized_keys
 chown ambari:ambari -R /home/ambari/.ssh/
 
 cat > /etc/apt/sources.list.d/ambari-sys-repo.list << EOF

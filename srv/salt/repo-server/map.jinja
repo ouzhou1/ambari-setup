@@ -3,7 +3,7 @@
         "pkgs": ["dpkg-dev"],
         "ambari_repo_nginx": {
             "sourcefile": "ubuntu14.04_ambari_repo_nginx.conf",
-            "server": "ambari-server1.example.com",
+            "server": "ambari-server1",
             "ip": "10.12.0.93",
             "port": "8089",
             "root": "/var/www/"
@@ -13,21 +13,21 @@
                 "dirname": "/var/www/HDP/ubuntu14/2.x/updates/",
                 "dirtarget": "/var/www/HDP/ubuntu14/2.x/updates/HDP/ubuntu14",
                 "dirsymlink": "/var/www/HDP/ubuntu14/2.x/updates/2.5.3.0",
-                "apt_repo": "deb http://ambari-server1.example.com:8089/HDP/ubuntu14/2.x/updates/2.5.3.0/ HDP main",
+                "apt_repo": "deb http://ambari-server1:8089/HDP/ubuntu14/2.x/updates/2.5.3.0/ HDP main",
                 "tarball_files": [
                     "HDP-2.5.3.0-ubuntu14-deb.tar.gz"
                 ]
             },
             "hdp-utils-repo": {
                 "dirname": "/var/www/",
-                "apt_repo": "deb http://ambari-server1.example.com:8089/HDP-UTILS-1.1.0.21/repos/ubuntu14/ HDP-UTILS main",
+                "apt_repo": "deb http://ambari-server1:8089/HDP-UTILS-1.1.0.21/repos/ubuntu14/ HDP-UTILS main",
                 "tarball_files": [
                     "HDP-UTILS-1.1.0.21-ubuntu14.tar.gz"
                 ]
             },
             "common-repo-dir": {
                 "dirname": "/var/www/ubuntu-14.04-common",
-                "apt_repo": "deb http://ambari-server1.example.com:8089/ubuntu-14.04-common ./",
+                "apt_repo": "deb http://ambari-server1:8089/ubuntu-14.04-common ./",
                 "tarball_files": [
                     "ubuntu-14.04-common.tar.gz"
                 ]

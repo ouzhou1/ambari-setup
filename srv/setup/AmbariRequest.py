@@ -6,10 +6,11 @@ Request method types: GET, POST, PUT, DELETE
 import pycurl
 import yaml
 import os
+import json
 import argparse
+import pprint
 
 from StringIO import StringIO
-
 
 class Ambari(object):
 
@@ -195,13 +196,10 @@ class Ambari(object):
             print """Put request to: %s\nWith post fields: %s""" % (request_url, post_fields)
 
             c.perform()
-            status = c.getinfo(c.HTTP_CODE)
-            string_buffer_value = string_buffer.getvalue()
-            string_buffer.close()
+            return_code = c.getinfo(c.RESPONSE_CODE)
             c.close()
 
-            print status
-            print string_buffer_value
+            return return_code
 
         except Exception as E:
             print "Failed to execute put method to URL: %s\nDue to: %s\nWith post fields: %s" % (request_url, E,
@@ -238,21 +236,18 @@ class Ambari(object):
                       (request_url, upload_file)
                 c.perform()
 
-            status = c.getinfo(c.HTTP_CODE)
-            string_buffer_value = string_buffer.getvalue()
-            string_buffer.close()
+            return_code = c.getinfo(c.RESPONSE_CODE)
             c.close()
 
-            print status
-            print string_buffer_value
+            return return_code
 
         except Exception as E:
             print "Failed to execute put method to URL: %s\nDue to: %s\n" % (request_url, E)
 
     def delete(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
+
         string_buffer = StringIO()
         c = pycurl.Curl()
-
         try:
             http_header = ['%s: %s' % (key, value) for key, value in self.amb_api_headers().iteritems()]
             baseurl = baseurl or self.amb_api_baseurl()
@@ -270,21 +265,18 @@ class Ambari(object):
                 c.setopt(pycurl.POSTFIELDS, post_fields)
 
             c.perform()
-            status = c.getinfo(c.HTTP_CODE)
-            string_buffer_value = string_buffer.getvalue()
-            string_buffer.close()
+            return_code = c.getinfo(c.RESPONSE_CODE)
             c.close()
 
-            print status
-            print string_buffer_value
+            return return_code
 
         except Exception as E:
             print "Failed to execute Delete method to URL: %s\nDue to: %s\n" % (request_url, E)
 
     def get(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
+
         string_buffer = StringIO()
         c = pycurl.Curl()
-
         try:
             http_header = ['%s: %s' % (key, value) for key, value in self.amb_api_headers().iteritems()]
             baseurl = baseurl or self.amb_api_baseurl()
@@ -302,19 +294,15 @@ class Ambari(object):
                 c.setopt(pycurl.POSTFIELDS, post_fields)
 
             c.perform()
-
-            status = c.getinfo(c.HTTP_CODE)
-            string_buffer_value = string_buffer.getvalue()
-            string_buffer.close()
+            return_code = c.getinfo(c.RESPONSE_CODE)
             c.close()
 
-            print status
-            print string_buffer_value
+            return return_code
 
         except Exception as E:
             print "Failed to execute Get method to URL: %s\nDue to: %s\n" % (request_url, E)
 
-    def ambari_initial(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
+    def hdp_reset(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
 
         ambari_cluster_bpt_conf_file = self.amb_bpt_cls_conf()
         ambari_hosts_map_file = self.amb_bpt_host_mp()
@@ -336,7 +324,31 @@ class Ambari(object):
         self.upload_file(ambari_blueprints_postfix_url, post_fields, ambari_cluster_bpt_conf_file, baseurl, detail)
         self.upload_file(ambari_cluster_postfix_url, post_fields, ambari_hosts_map_file, baseurl, detail)
 
-    def ambari_scale(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
+    def hdp_setup(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
+
+        ambari_cluster_bpt_conf_file = self.amb_bpt_cls_conf()
+        ambari_hosts_map_file = self.amb_bpt_host_mp()
+
+        ambari_cluster_postfix_url = self.amb_cls_postfix_url()
+        ambari_blueprints_postfix_url = self.amb_bpt_postfix_url()
+
+        ambari_cluster_hdp_repo_postfix_url = self.amb_hdp_repo_postfix_url()
+        ambari_cluster_hdp_util_repo_postfix_url = self.amb_hdp_utils_repo_postfix_url()
+
+        ambari_cluster_new_hdp_repo_info = self.amb_hdp_new_repo_info()
+        ambari_cluster_hdp_util_repo_postfix_info = self.amb_hdp_utils_new_repo_info()
+
+        return_code = self.get(ambari_cluster_postfix_url, post_fields, upload_file, baseurl, detail, *args)
+        print '\n'
+        print return_code
+        if return_code == 404:
+            self.put(ambari_cluster_hdp_repo_postfix_url, ambari_cluster_new_hdp_repo_info, upload_file, baseurl, detail)
+            self.put(ambari_cluster_hdp_util_repo_postfix_url, ambari_cluster_hdp_util_repo_postfix_info, upload_file,
+                     baseurl, detail)
+            self.upload_file(ambari_blueprints_postfix_url, post_fields, ambari_cluster_bpt_conf_file, baseurl, detail)
+            self.upload_file(ambari_cluster_postfix_url, post_fields, ambari_hosts_map_file, baseurl, detail)
+
+    def hdp_scale(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
                      scale_hosts=None, *args):
         """
         TODO:
@@ -361,7 +373,7 @@ def main():
     parser.add_argument("-p", action="store", dest="post_fields", help="post fields")
     parser.add_argument("-u", action="store", dest="upload_file", help="upload file name")
     parser.add_argument("-b", action="store", dest="baseurl", help="ambari server api base url")
-    parser.add_argument("-v", action="store_true", dest="detail", default=True, help="verbosity turned on")
+    parser.add_argument("-v", action="store_true", dest="detail", default=False, help="verbosity turned on")
     parser.add_argument("-f", action="store", dest="request_method", help="request method")
     parser.add_argument("-s", nargs='+', action="store", dest="scale_hosts", help="scale extend hosts")
 
@@ -378,8 +390,9 @@ def main():
         'upload_file': ambari.upload_file,
         'put': ambari.put,
         'get': ambari.get,
-        'ambari_initial': ambari.ambari_initial,
-        'ambari_scale': ambari.ambari_scale,
+        'hdp_setup': ambari.hdp_setup,
+        'hdp_scale': ambari.hdp_scale,
+        'hdp_reset': ambari.hdp_reset
     }
 
     request_method = args.request_method

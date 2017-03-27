@@ -1,6 +1,6 @@
 mysql-users:
   root:
-    bindip: ambari-server1.example.com
+    bindip: ambari-server1
     host: localhost
     user: root
     port: 3306
@@ -8,7 +8,7 @@ mysql-users:
     granthost: localhost
     charset: utf8
   ambari:
-    host: ambari-server1.example.com
+    host: ambari-server1
     granthost: '%'
     grantall: y
     port: 3306
@@ -21,7 +21,7 @@ mysql-users:
     createsql: Ambari-DDL-MySQL-CREATE.sql
     charset: utf8
   hive:
-    host: ambari-server1.example.com
+    host: ambari-server1
     granthost: '%'
     grantall: y
     port: 3306
