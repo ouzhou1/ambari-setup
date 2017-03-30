@@ -1008,7 +1008,7 @@
           "dfs.domain.socket.path" : "/var/lib/hadoop-hdfs/dn_socket",
           "dfs.datanode.ipc.address" : "0.0.0.0:8010",
           "dfs.cluster.administrators" : " hdfs",
-          "dfs.datanode.max.transfer.threads" : "4096",
+          "dfs.datanode.max.transfer.threads" : "11960",
           "dfs.namenode.handler.count" : "100",
           "dfs.https.port" : "50470",
           "dfs.replication.max" : "50",

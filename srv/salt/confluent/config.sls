@@ -30,4 +30,11 @@ schema-registry.properties:
     - context:
       kafkastore_connection_url: {{ kafkastore_connection_urls|join(',') }}
 
+source_profile_config:
+  cmd.run:
+    - name: ". ./.profile"
+    - cwd: /root
+
+
+
 {% endif %}

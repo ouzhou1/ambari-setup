@@ -6,4 +6,4 @@
 4. 在各个salt minion上初始化，运行 bash saltminion_setup.sh，输入salt master ip和salt minion id
 5. salt master接受key salt-key -L（check), salt-key -A -y
 6. 各个minion上，运行 salt-call state.highstate -l debug
-7. 在/srv/setup/下运行python AmbariRequest.py -f ambari_initial，完成安装
+7. 修改hdp_post_setup.sh, 确认confluent和kafka topic运行主机和脚本路径，并执行脚本

@@ -5,16 +5,19 @@ Request method types: GET, POST, PUT, DELETE
 """
 import pycurl
 import yaml
-import os
 import json
+import os
 import argparse
-import pprint
-
 from StringIO import StringIO
+import time
+
 
 class Ambari(object):
 
-    def __init__(self, amb_yml_conf = None):
+    SERVICES = []
+    SITE_TYPE = []
+
+    def __init__(self, amb_yml_conf=None):
         """
         TODO:
         """
@@ -51,7 +54,7 @@ class Ambari(object):
 
     def amb_api_baseurl(self):
         """
-        return ambari api baseurl
+        return ambari api baseurl which is used for CSRF authentication
         """
         try:
             return self.amb_cluster_detail()['ambari-api']['baseurl']
@@ -169,17 +172,24 @@ class Ambari(object):
         except Exception as E:
             print "Failed to acquire local ambari-cluster new hdp-utils repo info due to: %s" % E
 
+    def amb_site_config_postfix_url(self):
+        """
+        """
+        try:
+            return self.amb_cluster_detail()['ambari-api']['site_config_postfix_url']
+        except Exception as E:
+            print "Failed to acquire local ambari-cluster site config postfix due to: %s" % E
+
     def put(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
         """
         Put request method function
-        post_field
+        only post post_field
         """
 
         string_buffer = StringIO()
         c = pycurl.Curl()
         try:
             http_header = ['%s: %s' % (key, value) for key, value in self.amb_api_headers().iteritems()]
-            post_fields = post_fields
             baseurl = baseurl or self.amb_api_baseurl()
             request_url = "%s/%s" % (baseurl, url_postfix)
 
@@ -188,27 +198,42 @@ class Ambari(object):
             c.setopt(pycurl.USERPWD, "%(username)s:%(password)s" % self.amb_api_auth())
             c.setopt(pycurl.HTTPHEADER, http_header)
             c.setopt(pycurl.CUSTOMREQUEST, "PUT")
-            c.setopt(pycurl.POSTFIELDS, post_fields)
             c.setopt(pycurl.WRITEFUNCTION, string_buffer.write)
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
             c.setopt(pycurl.VERBOSE, detail)
 
-            print """Put request to: %s\nWith post fields: %s""" % (request_url, post_fields)
+            if post_fields:
+                c.setopt(pycurl.POSTFIELDS, post_fields)
+                print """Put request to: %s\nWith put fields: %s""" % (request_url, post_fields)
+                c.perform()
+                return_content = string_buffer.getvalue()
+                return_code = c.getinfo(c.RESPONSE_CODE)
+                string_buffer.close()
+                c.close()
+                return {"return_code": return_code, "return_contentn": return_content}
 
-            c.perform()
-            return_code = c.getinfo(c.RESPONSE_CODE)
-            c.close()
-
-            return return_code
+            elif upload_file:
+                c.setopt(pycurl.UPLOAD, 1)
+                with open(upload_file, 'rb') as upload_fd:
+                    c.setopt(pycurl.READFUNCTION, upload_fd.read)
+                    file_size = os.path.getsize(upload_file)
+                    c.setopt(pycurl.INFILESIZE, file_size)
+                    print "Put request to: %s\nWith put upload file: %s" % \
+                          (request_url, upload_file)
+                    c.perform()
+                    return_content = string_buffer.getvalue()
+                    return_code = c.getinfo(c.RESPONSE_CODE)
+                    string_buffer.close()
+                    c.close()
+                    return {"return_code": return_code, "return_contentn": return_content}
 
         except Exception as E:
-            print "Failed to execute put method to URL: %s\nDue to: %s\nWith post fields: %s" % (request_url, E,
-                                                                                                 post_fields)
+            print "Failed to execute put method to URL: %s\nDue to: %s" % (request_url, E)
 
-    def upload_file(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
+    def post(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
         """
         Put request method function
-        post_field
+        only upload file
         """
 
         string_buffer = StringIO()
@@ -225,27 +250,40 @@ class Ambari(object):
             c.setopt(pycurl.CUSTOMREQUEST, "POST")
             c.setopt(pycurl.WRITEFUNCTION, string_buffer.write)
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
-            c.setopt(pycurl.UPLOAD, 1)
             c.setopt(pycurl.VERBOSE, detail)
 
-            with open(upload_file, 'rb') as upload_fd:
-                c.setopt(pycurl.READFUNCTION, upload_fd.read)
-                file_size = os.path.getsize(upload_file)
-                c.setopt(pycurl.INFILESIZE, file_size)
-                print "Put request to: %s\nWith post upload file: %s" % \
-                      (request_url, upload_file)
+            if post_fields:
+                c.setopt(pycurl.POSTFIELDS, post_fields)
+                print """Post request to: %s\nWith post fields: %s""" % (request_url, post_fields)
                 c.perform()
+                return_content = string_buffer.getvalue()
+                return_code = c.getinfo(c.RESPONSE_CODE)
+                string_buffer.close()
+                c.close()
+                return {"return_code": return_code, "return_contentn": return_content}
 
-            return_code = c.getinfo(c.RESPONSE_CODE)
-            c.close()
-
-            return return_code
+            elif upload_file:
+                c.setopt(pycurl.UPLOAD, 1)
+                with open(upload_file, 'rb') as upload_fd:
+                    c.setopt(pycurl.READFUNCTION, upload_fd.read)
+                    file_size = os.path.getsize(upload_file)
+                    c.setopt(pycurl.INFILESIZE, file_size)
+                    print "Post request to: %s\nWith post upload file: %s" % \
+                          (request_url, upload_file)
+                    c.perform()
+                    return_content = string_buffer.getvalue()
+                    return_code = c.getinfo(c.RESPONSE_CODE)
+                    string_buffer.close()
+                    c.close()
+                    return {"return_code": return_code, "return_contentn": return_content}
 
         except Exception as E:
             print "Failed to execute put method to URL: %s\nDue to: %s\n" % (request_url, E)
 
     def delete(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
-
+        """
+        TODO:
+        """
         string_buffer = StringIO()
         c = pycurl.Curl()
         try:
@@ -266,15 +304,19 @@ class Ambari(object):
 
             c.perform()
             return_code = c.getinfo(c.RESPONSE_CODE)
+            return_content = string_buffer.getvalue()
             c.close()
+            string_buffer.close()
 
-            return return_code
+            return {"return_code": return_code, "return_content": return_content}
 
         except Exception as E:
             print "Failed to execute Delete method to URL: %s\nDue to: %s\n" % (request_url, E)
 
     def get(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
-
+        """
+        TODO:
+        """
         string_buffer = StringIO()
         c = pycurl.Curl()
         try:
@@ -286,6 +328,7 @@ class Ambari(object):
             c.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_BASIC)
             c.setopt(pycurl.USERPWD, "%(username)s:%(password)s" % self.amb_api_auth())
             c.setopt(pycurl.HTTPHEADER, http_header)
+            c.setopt(pycurl.WRITEFUNCTION, string_buffer.write)
             c.setopt(pycurl.CUSTOMREQUEST, "GET")
             c.setopt(pycurl.CONNECTTIMEOUT, 30)
             c.setopt(pycurl.VERBOSE, detail)
@@ -294,16 +337,21 @@ class Ambari(object):
                 c.setopt(pycurl.POSTFIELDS, post_fields)
 
             c.perform()
+            return_content = string_buffer.getvalue()
+            string_buffer.close()
             return_code = c.getinfo(c.RESPONSE_CODE)
             c.close()
+            string_buffer.close()
 
-            return return_code
+            return {"return_code": return_code, "return_content": return_content}
 
         except Exception as E:
             print "Failed to execute Get method to URL: %s\nDue to: %s\n" % (request_url, E)
 
     def hdp_reset(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
-
+        """
+        TODO:
+        """
         ambari_cluster_bpt_conf_file = self.amb_bpt_cls_conf()
         ambari_hosts_map_file = self.amb_bpt_host_mp()
 
@@ -316,16 +364,23 @@ class Ambari(object):
         ambari_cluster_new_hdp_repo_info = self.amb_hdp_new_repo_info()
         ambari_cluster_hdp_util_repo_postfix_info = self.amb_hdp_utils_new_repo_info()
 
-        self.delete(ambari_cluster_postfix_url, post_fields, upload_file, baseurl, detail)
-        self.delete(ambari_blueprints_postfix_url, post_fields, upload_file, baseurl, detail)
-        self.put(ambari_cluster_hdp_repo_postfix_url, ambari_cluster_new_hdp_repo_info, upload_file, baseurl, detail)
-        self.put(ambari_cluster_hdp_util_repo_postfix_url, ambari_cluster_hdp_util_repo_postfix_info, upload_file,
-                 baseurl, detail)
-        self.upload_file(ambari_blueprints_postfix_url, post_fields, ambari_cluster_bpt_conf_file, baseurl, detail)
-        self.upload_file(ambari_cluster_postfix_url, post_fields, ambari_hosts_map_file, baseurl, detail)
+        # delete existed cluster and blueprint
+        self.delete(url_postfix=ambari_cluster_postfix_url, detail=detail)
+        self.delete(url_postfix=ambari_blueprints_postfix_url, detail=detail)
+        # set ambari HDP repo info
+        self.put(url_postfix=ambari_cluster_hdp_repo_postfix_url, post_fields=ambari_cluster_new_hdp_repo_info,
+                 detail=detail)
+        self.put(url_postfix=ambari_cluster_hdp_util_repo_postfix_url,
+                 post_fields=ambari_cluster_hdp_util_repo_postfix_info, detail=detail)
+        # upload blueprint and hostmaping file to trigger ambari cluster setup
+        self.post(url_postfix=ambari_blueprints_postfix_url, upload_file=ambari_cluster_bpt_conf_file,
+                 detail=detail)
+        self.post(url_postfix=ambari_cluster_postfix_url, upload_file=ambari_hosts_map_file, detail=detail)
 
     def hdp_setup(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, *args):
-
+        """
+        TODO:
+        """
         ambari_cluster_bpt_conf_file = self.amb_bpt_cls_conf()
         ambari_hosts_map_file = self.amb_bpt_host_mp()
 
@@ -338,44 +393,143 @@ class Ambari(object):
         ambari_cluster_new_hdp_repo_info = self.amb_hdp_new_repo_info()
         ambari_cluster_hdp_util_repo_postfix_info = self.amb_hdp_utils_new_repo_info()
 
-        return_code = self.get(ambari_cluster_postfix_url, post_fields, upload_file, baseurl, detail, *args)
-        print '\n'
-        print return_code
-        if return_code == 404:
-            self.put(ambari_cluster_hdp_repo_postfix_url, ambari_cluster_new_hdp_repo_info, upload_file, baseurl, detail)
-            self.put(ambari_cluster_hdp_util_repo_postfix_url, ambari_cluster_hdp_util_repo_postfix_info, upload_file,
-                     baseurl, detail)
-            self.upload_file(ambari_blueprints_postfix_url, post_fields, ambari_cluster_bpt_conf_file, baseurl, detail)
-            self.upload_file(ambari_cluster_postfix_url, post_fields, ambari_hosts_map_file, baseurl, detail)
+        return_code = self.get(ambari_cluster_postfix_url, post_fields, upload_file, baseurl, detail,
+                               *args)["return_code"]
 
-    def hdp_scale(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
-                     scale_hosts=None, *args):
+        # only trigger setup when no cluster existed, so 403 is returned
+        if return_code == 404:
+            # set ambari HDP repo info
+            self.put(url_postfix=ambari_cluster_hdp_repo_postfix_url, post_fields=ambari_cluster_new_hdp_repo_info,
+                     detail=detail)
+            self.put(url_postfix=ambari_cluster_hdp_util_repo_postfix_url,
+                     post_fields=ambari_cluster_hdp_util_repo_postfix_info, detail=detail)
+            # upload blueprint and hostmaping file to trigger ambari cluster setup
+            self.post(url_postfix=ambari_blueprints_postfix_url, upload_file=ambari_cluster_bpt_conf_file,
+                     detail=detail)
+            self.post(url_postfix=ambari_cluster_postfix_url, upload_file=ambari_hosts_map_file, detail=detail)
+
+    def hdp_scale(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0, scale_hosts=None,
+                  *args):
         """
         TODO:
         """
         ambari_blueprints_scale_conf = self.amb_bpt_scale_conf()
+        ambari_cluster_postfix_url = self.amb_cls_postfix_url()
+
+        hosts_url_postfix = url_postfix or "%s/%s" % (ambari_cluster_postfix_url, "hosts")
+
         if scale_hosts:
             for scale_host in scale_hosts:
-                post_fields = "%s/%s" % (post_fields, scale_host)
-                self.upload_file(url_postfix, post_fields, ambari_blueprints_scale_conf, baseurl, detail)
+                url_postfix = "%s/%s" % (hosts_url_postfix, scale_host)
+                self.post(url_postfix=url_postfix, upload_file=ambari_blueprints_scale_conf, detail=detail)
         else:
             raise Exception("No scale hosts given!!!")
+
+    def hdp_property_config(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
+                            scale_hosts=None, site_type=None, keys_and_new_values=None, *args):
+        """
+        For now, only change one property attribute.
+        TODO: provided a change list
+        """
+        ambari_cluster_desire_config_format = '{ "Clusters": { "desired_config": {"type": "%s", "tag":"%s", ' \
+                                              '"properties" : {}}}}'
+
+        if site_type and keys_and_new_values:
+
+            new_site_type_tag = "version_%s" % str(int(time.time()))
+
+            ambari_cluster_postfix_url = self.amb_cls_postfix_url()
+            ambari_cluster_site_config_postfix_url = self.amb_site_config_postfix_url()
+            ambari_cluster_site_config_url_format = "%s/%s" % (ambari_cluster_postfix_url,
+                                                               ambari_cluster_site_config_postfix_url)
+
+            site_desired_config_tag_url = "%s?fields=Clusters/desired_configs/%s" % (ambari_cluster_postfix_url,
+                                                                                     site_type)
+
+            site_desired_config = json.loads(self.get(url_postfix=site_desired_config_tag_url, detail=detail)
+                                             ["return_content"])
+
+            site_type_latest_tag = site_desired_config['Clusters']['desired_configs']['%s' % site_type]['tag']
+
+            ambari_cluster_site_config_url = ambari_cluster_site_config_url_format % (site_type, site_type_latest_tag)
+
+            url_postfix = url_postfix or ambari_cluster_site_config_url
+
+            cluster_site_config_json = json.loads(self.get(url_postfix=url_postfix, detail=detail)["return_content"])
+            cluster_site_config_properties = cluster_site_config_json['items'][0]['properties']
+
+            for key_new_value in keys_and_new_values:
+                key, new_value = key_new_value.split(":", 1)
+                cluster_site_config_properties[key] = new_value
+
+            ambari_cluster_site_desire_config = ambari_cluster_desire_config_format % (site_type, new_site_type_tag)
+            ambari_cluster_site_desire_config_json = json.loads(ambari_cluster_site_desire_config)
+            ambari_cluster_site_desire_config_json['Clusters']['desired_config']['properties'] = \
+                cluster_site_config_properties
+
+            cluster_site_config_json_file = "cluster_site_config_json_%s.json" % new_site_type_tag
+
+            with open(cluster_site_config_json_file, "w") as site_config_json:
+                json.dump(ambari_cluster_site_desire_config_json, site_config_json)
+
+            self.put(url_postfix=ambari_cluster_postfix_url, upload_file=cluster_site_config_json_file,
+                             detail=detail)
+
+        else:
+            raise TypeError("check key/new_value site-type...etc, exit!")
+
+    def hdp_service_stop(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
+                         scale_hosts=None, site_type=None, keys_and_new_values=None, service_name=None, *args):
+        """
+        For example: YARN service, post_fields should be like
+        '{"RequestInfo": {"context": "Stop YARN"}, "ServiceInfo": {"state": "INSTALLED"}}'
+        """
+        if service_name:
+
+            ambari_cluster_postfix_url = self.amb_cls_postfix_url()
+            ambari_cluster_service_name = "%s/services/%s" % (ambari_cluster_postfix_url, service_name)
+
+            url_postfix = url_postfix or ambari_cluster_service_name
+
+            self.put(url_postfix=url_postfix, post_fields=post_fields, detail=detail)
+        else:
+            raise Exception("No service_name provided!!!")
+
+    def hdp_service_start(self, url_postfix=None, post_fields=None, upload_file=None, baseurl=None, detail=0,
+                          scale_hosts=None, site_type=None, keys_and_new_values=None, service_name=None, *args):
+        """
+        For example: YARN service, post_fields should be like
+        '{"RequestInfo": {"context": "Start YARN"}, "ServiceInfo": {"state": "STARTED"}}'
+        """
+        if service_name:
+
+            ambari_cluster_postfix_url = self.amb_cls_postfix_url()
+            ambari_cluster_service_name = "%s/services/%s" % (ambari_cluster_postfix_url, service_name)
+
+            url_postfix = url_postfix or ambari_cluster_service_name
+
+            self.put(url_postfix=url_postfix, post_fields=post_fields, detail=detail)
+        else:
+            raise Exception("No service_name provided!!!")
 
 
 def main():
     """
-    #todo:
+    TODO:
     """
     ambari = Ambari()
 
     parser = argparse.ArgumentParser(description="Ambari Cluster Curl API")
     parser.add_argument("-a", action="store", dest="url_postfix", help='baseurl postfix or api url')
-    parser.add_argument("-p", action="store", dest="post_fields", help="post fields")
+    parser.add_argument("-d", action="store", dest="post_fields", help="post fields")
     parser.add_argument("-u", action="store", dest="upload_file", help="upload file name")
     parser.add_argument("-b", action="store", dest="baseurl", help="ambari server api base url")
     parser.add_argument("-v", action="store_true", dest="detail", default=False, help="verbosity turned on")
     parser.add_argument("-f", action="store", dest="request_method", help="request method")
-    parser.add_argument("-s", nargs='+', action="store", dest="scale_hosts", help="scale extend hosts")
+    parser.add_argument("-e", nargs='+', action="store", dest="scale_hosts", help="scale extend hosts")
+    parser.add_argument("-t", action="store", dest="site_type", help="config set site type")
+    parser.add_argument("-c", nargs='+', action="store", dest="keys_and_new_values", help="ambari site_type properties key")
+    parser.add_argument("-s", action="store", dest="service_name", help="ambari service name")
 
     print parser.parse_args()
     args = parser.parse_args()
@@ -387,12 +541,15 @@ def main():
 
     request_method_dict = {
         'delete': ambari.delete,
-        'upload_file': ambari.upload_file,
+        'post': ambari.post,
         'put': ambari.put,
         'get': ambari.get,
         'hdp_setup': ambari.hdp_setup,
         'hdp_scale': ambari.hdp_scale,
-        'hdp_reset': ambari.hdp_reset
+        'hdp_reset': ambari.hdp_reset,
+        'hdp_property_config': ambari.hdp_property_config,
+        'hdp_service_start': ambari.hdp_service_start,
+        'hdp_service_stop': ambari.hdp_service_stop
     }
 
     request_method = args.request_method
@@ -403,7 +560,11 @@ def main():
                                             args.upload_file,
                                             args.baseurl,
                                             detail,
-                                            args.scale_hosts)
+                                            args.scale_hosts,
+                                            args.site_type,
+                                            args.keys_and_new_values,
+                                            args.service_name)
+
 
 if __name__ == '__main__':
     main()

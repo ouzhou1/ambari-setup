@@ -5,3 +5,4 @@ include:
   - ambari-cluster.pkg
   - ambari-cluster.config-agent
   - confluent
+  - ambari-cluster.kafka-topic

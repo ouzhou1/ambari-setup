@@ -4,7 +4,7 @@ ambari-cluster:
   javatarball: jdk-8u77-linux-x64.tar.gz
   jcepolicy: jce_policy-8.zip
   javaresourcesdir: /srv/salt/repo-server/files/sources/
-  sshprefix: "ambari*"
+  sshconfighostprefix: "bigdata-hbase*"
   mysqlconnectordirs:
     - '/usr/hdp/2.5.3.0-37/hive/lib/'
     - '/usr/hdp/current/hive-server2-hive2/lib/'
@@ -15,6 +15,7 @@ ambari-cluster:
     blueprints_cluster_conf: "../salt/ambari-cluster/files/blueprints/cluster_configuration.json"
     blueprints_host_map: "../salt/ambari-cluster/files/blueprints/hostmapping.json"
     blueprints_scale_conf: "../salt/ambari-cluster/files/blueprints/scalextension.json"
+    site_config_postfix_url: "configurations?type=%s&tag=%s"
     url_postfix_cluster: "clusters/bigdata"
     url_postfix_blueprints: 'blueprints/BPT/?validate_topology=false'
     url_postfix_HDP_repo: 'stacks/HDP/versions/2.5/operating_systems/ubuntu14/repositories/HDP-2.5'
@@ -57,3 +58,5 @@ java:
   dir: /usr/jdk64/jdk1.8.0_77
   profile_homedir: /root/.profile
 
+kafka-topic:
+  hostname: bigdata-hbase2

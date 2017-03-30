@@ -65,7 +65,7 @@
     - require:
       - user: {{ servername }}-{{ serverinfo['ambari_user'] }}
     - context:
-      hosts: {{ ambari_cluster['sshprefix'] }}
+      hosts: {{ ambari_cluster['sshconfighostprefix'] }}
 
 {% endif %}
 
