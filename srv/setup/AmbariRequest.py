@@ -14,14 +14,21 @@ import time
 
 class Ambari(object):
 
-    SERVICES = []
-    SITE_TYPE = []
+    def __new__(cls):
+        """
+        Single instance model
+        """
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Ambari, cls).__new__(cls)
+        return cls.instance
 
     def __init__(self, amb_yml_conf=None):
         """
         TODO:
         """
         self.amb_yml_conf = amb_yml_conf or ".ambari-cluster.yaml"
+        self.services = None
+        self.site_type = None
 
     def amb_cluster(self):
         """
@@ -520,16 +527,17 @@ def main():
     ambari = Ambari()
 
     parser = argparse.ArgumentParser(description="Ambari Cluster Curl API")
+
     parser.add_argument("-a", action="store", dest="url_postfix", help='baseurl postfix or api url')
     parser.add_argument("-d", action="store", dest="post_fields", help="post fields")
     parser.add_argument("-u", action="store", dest="upload_file", help="upload file name")
     parser.add_argument("-b", action="store", dest="baseurl", help="ambari server api base url")
-    parser.add_argument("-v", action="store_true", dest="detail", default=False, help="verbosity turned on")
-    parser.add_argument("-f", action="store", dest="request_method", help="request method")
-    parser.add_argument("-e", nargs='+', action="store", dest="scale_hosts", help="scale extend hosts")
-    parser.add_argument("-t", action="store", dest="site_type", help="config set site type")
-    parser.add_argument("-c", nargs='+', action="store", dest="keys_and_new_values", help="ambari site_type properties key")
     parser.add_argument("-s", action="store", dest="service_name", help="ambari service name")
+    parser.add_argument("-t", action="store", dest="site_type", help="config set site type")
+    parser.add_argument("-f", action="store", dest="request_method", help="request method")
+    parser.add_argument("-v", action="store_true", dest="detail", default=False, help="verbosity turned on")
+    parser.add_argument("-e", nargs='+', action="store", dest="scale_hosts", help="scale extend hosts")
+    parser.add_argument("-c", nargs='+', action="store", dest="keys_and_new_values", help="ambari site_type properties key")
 
     print parser.parse_args()
     args = parser.parse_args()
